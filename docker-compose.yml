@@ -1,0 +1,49 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: titans-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - titans-net
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: titans-server
+    restart: unless-stopped
+    env_file: ./server/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/titans-volei
+      - CLIENT_URL=http://localhost
+    depends_on:
+      - mongo
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - titans-net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: titans-frontend
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    depends_on:
+      - server
+    networks:
+      - titans-net
+
+volumes:
+  mongo_data:
+  uploads_data:
+
+networks:
+  titans-net:
+    driver: bridge
