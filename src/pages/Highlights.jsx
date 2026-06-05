@@ -168,7 +168,7 @@ function HighlightCard({ highlight, onDelete, onEdit, mensalistas }) {
     category: highlight.category || 'jogada',
     playerName: highlight.playerName || '',
   });
-  const videoSrc = `${API_BASE}/uploads/highlights/${highlight.filePath}`;
+  const videoSrc = highlight.filePath;
 
   const handleDelete = async () => {
     setDeleting(true);
